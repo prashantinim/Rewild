@@ -7,12 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1476BC052B0FCDCB00DEF0A3 /* OpenAIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1476BC042B0FCDCB00DEF0A3 /* OpenAIEndpoint.swift */; };
+		143CA6A02B108F7400369B1F /* OpenAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 143CA69F2B108F7400369B1F /* OpenAIKit */; };
+		143CA6AA2B10A32500369B1F /* OpenAi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143CA6A92B10A32400369B1F /* OpenAi.swift */; };
 		1476BC072B0FD6DE00DEF0A3 /* tesstttt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1476BC062B0FD6DE00DEF0A3 /* tesstttt.swift */; };
-		14DB3E422B0FB95E00A00974 /* open_ai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DB3E412B0FB95E00A00974 /* open_ai.swift */; };
 		14DB3E452B0FBA4D00A00974 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 14DB3E442B0FBA4D00A00974 /* OpenAISwift */; };
 		14E913332B0F894000DF160A /* RewildApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E913322B0F894000DF160A /* RewildApp.swift */; };
-		14E913352B0F894000DF160A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E913342B0F894000DF160A /* ContentView.swift */; };
 		14E913372B0F894500DF160A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14E913362B0F894500DF160A /* Assets.xcassets */; };
 		14E9133A2B0F894500DF160A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14E913392B0F894500DF160A /* Preview Assets.xcassets */; };
 		14E913442B0F894600DF160A /* RewildTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E913432B0F894600DF160A /* RewildTests.swift */; };
@@ -40,12 +39,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1476BC042B0FCDCB00DEF0A3 /* OpenAIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIEndpoint.swift; sourceTree = "<group>"; };
+		143CA6A92B10A32400369B1F /* OpenAi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAi.swift; sourceTree = "<group>"; };
 		1476BC062B0FD6DE00DEF0A3 /* tesstttt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tesstttt.swift; sourceTree = "<group>"; };
-		14DB3E412B0FB95E00A00974 /* open_ai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = open_ai.swift; sourceTree = "<group>"; };
 		14E9132F2B0F894000DF160A /* Rewild.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rewild.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		14E913322B0F894000DF160A /* RewildApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewildApp.swift; sourceTree = "<group>"; };
-		14E913342B0F894000DF160A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		14E913362B0F894500DF160A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		14E913392B0F894500DF160A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		14E9133F2B0F894600DF160A /* RewildTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RewildTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -63,6 +60,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				14DB3E452B0FBA4D00A00974 /* OpenAISwift in Frameworks */,
+				143CA6A02B108F7400369B1F /* OpenAIKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,10 +107,8 @@
 			children = (
 				14E9135E2B0F89C900DF160A /* new.json */,
 				14E913322B0F894000DF160A /* RewildApp.swift */,
-				14E913342B0F894000DF160A /* ContentView.swift */,
+				143CA6A92B10A32400369B1F /* OpenAi.swift */,
 				14E9135C2B0F897700DF160A /* Specifics.swift */,
-				14DB3E412B0FB95E00A00974 /* open_ai.swift */,
-				1476BC042B0FCDCB00DEF0A3 /* OpenAIEndpoint.swift */,
 				14E913362B0F894500DF160A /* Assets.xcassets */,
 				14E913382B0F894500DF160A /* Preview Content */,
 			);
@@ -162,6 +158,7 @@
 			name = Rewild;
 			packageProductDependencies = (
 				14DB3E442B0FBA4D00A00974 /* OpenAISwift */,
+				143CA69F2B108F7400369B1F /* OpenAIKit */,
 			);
 			productName = Rewild;
 			productReference = 14E9132F2B0F894000DF160A /* Rewild.app */;
@@ -237,6 +234,7 @@
 			mainGroup = 14E913262B0F894000DF160A;
 			packageReferences = (
 				14DB3E432B0FBA4D00A00974 /* XCRemoteSwiftPackageReference "OpenAISwift" */,
+				143CA69E2B108F7300369B1F /* XCRemoteSwiftPackageReference "openai-kit" */,
 			);
 			productRefGroup = 14E913302B0F894000DF160A /* Products */;
 			projectDirPath = "";
@@ -283,10 +281,8 @@
 			files = (
 				1476BC072B0FD6DE00DEF0A3 /* tesstttt.swift in Sources */,
 				14E9135D2B0F897700DF160A /* Specifics.swift in Sources */,
-				1476BC052B0FCDCB00DEF0A3 /* OpenAIEndpoint.swift in Sources */,
-				14E913352B0F894000DF160A /* ContentView.swift in Sources */,
+				143CA6AA2B10A32500369B1F /* OpenAi.swift in Sources */,
 				14E913332B0F894000DF160A /* RewildApp.swift in Sources */,
-				14DB3E422B0FB95E00A00974 /* open_ai.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -612,6 +608,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		143CA69E2B108F7300369B1F /* XCRemoteSwiftPackageReference "openai-kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dylanshine/openai-kit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.2;
+			};
+		};
 		14DB3E432B0FBA4D00A00974 /* XCRemoteSwiftPackageReference "OpenAISwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/adamrushy/OpenAISwift";
@@ -623,6 +627,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		143CA69F2B108F7400369B1F /* OpenAIKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 143CA69E2B108F7300369B1F /* XCRemoteSwiftPackageReference "openai-kit" */;
+			productName = OpenAIKit;
+		};
 		14DB3E442B0FBA4D00A00974 /* OpenAISwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 14DB3E432B0FBA4D00A00974 /* XCRemoteSwiftPackageReference "OpenAISwift" */;
