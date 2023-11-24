@@ -121,14 +121,16 @@ enum PlantType: String, Codable {
     case tree = "Tree"
 }
 
-enum UserState: String, Codable {
+enum UserState: String, Codable, CaseIterable {
     case nsw = "NSW"
     case vic = "VIC"
+    // Add other states as needed
 }
 
-enum UserPostcode: String, Codable {
-    case nsw = "2084"
-    case vic = "3249"
+enum UserPostcode: String, Codable, CaseIterable {
+    case nsw2084 = "2084"
+    case vic3249 = "3249"
+    // Add other postcodes as needed
 }
 
 enum WindTolerance: String, Codable {

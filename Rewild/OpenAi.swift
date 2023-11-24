@@ -31,16 +31,57 @@ final class APICaller {
     }
     
     private func parseResponseToChoices(_ responseText: String) -> [Choice] {
-            var choices = [Choice]()
+        var choices = [Choice]()
 
-            // Implement the actual parsing logic here
-            // Convert the responseText into an array of Choice objects
-            // Depending on the format of the response text, this might involve parsing JSON,
-            // extracting information from a string, etc.
+        // Split the responseText into individual names, assuming it's comma-separated
+        let plantNames = responseText.components(separatedBy: ", ").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
 
-            return choices
+        for name in plantNames {
+            let choice = Choice(
+                id: UUID().uuidString,
+                locationID: LocationID.the0F92C001Ddc5D67Bec3Dfc4Caed49Ca1, // Example default value
+                scientificName: name,
+                commonName: "Default Common Name", // Placeholder
+                family: "Default Family", // Placeholder
+                kingdom: Kingdom.plantae, // Example default value
+                count: 1, // Placeholder
+                state: UserState.nsw, // Example default value
+                postcode: 12345, // Placeholder
+                speciesID: 1, // Placeholder
+                plantType: PlantType.shrub, // Example default value
+                plantOrigin: "Default Origin", // Placeholder
+                lightRequirement: LightRequirement.fullSun, // Example default value
+                windTolerance: WindTolerance.sheltered, // Example default value
+                growthRate: GrowthRate.medium, // Example default value
+                frostResistant: FrostResistant.hardy, // Example default value
+                isEvergreen: false, // Placeholder
+                isNative: true, // Placeholder
+                plantHeight: PlantHeight.the15M, // Example default value
+                plantWidth: 1.0, // Placeholder
+                plantSize: PlantSize.medium, // Example default value
+                flowerColor: "Default Color", // Placeholder
+                occurrenceByState: "Default Occurrence", // Placeholder
+                floweringMonth: "Default Month", // Placeholder
+                climateZone: "Default Zone", // Placeholder
+                isIntroducedAct: false, // Placeholder
+                isIntroducedTas: false, // Placeholder
+                isIntroducedWa: false, // Placeholder
+                isIntroducedVic: false, // Placeholder
+                isIntroducedQld: false, // Placeholder
+                isIntroducedNsw: false, // Placeholder
+                isIntroducedSa: false, // Placeholder
+                isIntroducedNT: false, // Placeholder
+                imageURL: "Default URL", // Placeholder
+                summary: "Default Summary" // Placeholder
+            )
+            choices.append(choice)
         }
-    
+
+        return choices
+    }
+
+
+
     public func getPlantRecommendations(state: String, postcode: String, plantType: String, plantSize: String, flowerColor: String, plantHeight: String, completion: @escaping (Result<[Choice], Error>) -> Void) {
         let query = "Get me three native plants from the region with state: \(state) and postcode: \(postcode) that best match these requirements: " +
         "plant_type:\(plantType), " +
