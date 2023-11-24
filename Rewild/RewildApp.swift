@@ -258,9 +258,16 @@ struct UserLocationView: View {
             }
 
             Button("Find Plants") {
-                isLoading = true
-                viewModel.fetchOpenAIPlantRecommendations(plantType: preferredPlantType, plantSize: preferredPlantSize, flowerColor: preferredFloweringColor, state: userState, postcode: userPostcode, plantHeight: preferredPlantHeight)
-                self.showResults = true
+                            viewModel.fetchOpenAIPlantRecommendations(plantType: preferredPlantType, plantSize: preferredPlantSize, flowerColor: preferredFloweringColor, state: userState, postcode: userPostcode, plantHeight: preferredPlantHeight)
+                        }
+
+                        if viewModel.isLoading {
+                            ProgressView("Loading...")
+                        }
+
+                        if let errorMessage = viewModel.errorMessage {
+                            Text(errorMessage)
+                                .foregroundColor(.red)
             }
 
         }
@@ -272,6 +279,8 @@ class PlantViewModel: ObservableObject {
     @Published var recommendedPlants: [Choice] = []
     @Published var requirements: String = ""
     @Published var careInfo: String = ""
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
     
     var states: [String] {
         Array(Set(choices.map { $0.state.rawValue })).sorted()
@@ -336,17 +345,19 @@ class PlantViewModel: ObservableObject {
     }
 
     func fetchOpenAIPlantRecommendations(plantType: String, plantSize: String, flowerColor: String, state: String, postcode: String, plantHeight: String) {
-        APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantType, plantSize: plantSize, flowerColor: flowerColor, plantHeight: plantHeight) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let response):
-                    self?.recommendedPlants = response
-                case .failure(let error):
-                    print("Error fetching plant recommendations: \(error.localizedDescription)")
+            isLoading = true
+            APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantType, plantSize: plantSize, flowerColor: flowerColor, plantHeight: plantHeight) { [weak self] result in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    switch result {
+                    case .success(let response):
+                        self?.recommendedPlants = response
+                    case .failure(let error):
+                        self?.errorMessage = error.localizedDescription
+                    }
                 }
             }
         }
-    }
     
     func fetchPlantCareInfo(for plantName: String) {
         let query = "Get me care information for the plant: \(plantName)"
