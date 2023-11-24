@@ -568,14 +568,7 @@ struct HistoryView: View {
             .navigationBarTitle("Viewed Plants History", displayMode: .inline)
         }
 }
-    
-    
-    // ImageLoader definition
-    
-    
-    // LocationManager class to handle location services
-    
-    
+        
     // PlantImageView definition
 struct PlantImageView: View {
         let imageURL: URL?
@@ -635,20 +628,21 @@ struct WebView: UIViewRepresentable {
 struct ResultsView: View {
         @ObservedObject var viewModel: PlantViewModel
         
-        var body: some View {
-            List(viewModel.recommendedPlants, id: \.id) { plant in
-                VStack(alignment: .leading) {
-                    Text(plant.scientificName)
-                    // Add more details as needed
-                }
+    var body: some View {
+        List(viewModel.recommendedPlants, id: \.id) { plant in
+            VStack(alignment: .leading) {
+                Text(plant.scientificName)
+                // Add more details as needed
             }
-            .navigationBarTitle("Recommended Plants")
-                    .onAppear {
-                        if viewModel.recommendedPlants.isEmpty {
-                            Text("No plants found")
-                        }
-                     }
-                 }
+        }
+        .navigationBarTitle("Recommended Plants")
+        .onAppear {
+            if viewModel.recommendedPlants.isEmpty {
+                Text("No plants found")
+            }
+        }
+    }
+                 
 }
     
     // Ensure that you have the ImageLoader class defined as in your previous code
@@ -728,7 +722,7 @@ struct PlantCareView: View {
         var body: some View {
             Text("Plant Care Information")
         }
-    }
+}
     
     // Renaming the second PreferencesView to avoid duplicate declaration
 struct PlantCriteriaSelectionView: View {
