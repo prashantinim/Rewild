@@ -210,7 +210,7 @@ struct UserLocationView: View {
     
     @State private var showResults = false
     @State private var isLoading = false
-
+    
     
     var body: some View {
         
@@ -222,7 +222,7 @@ struct UserLocationView: View {
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
-
+                
                 Picker("Postcode", selection: $userPostcode) {
                     ForEach(UserPostcode.allCases, id: \.self) { postcode in
                         Text(postcode.rawValue).tag(postcode.rawValue)
@@ -230,121 +230,122 @@ struct UserLocationView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
             }
-
+            
             Section(header: Text("Select Your Preferences")) {
                 Picker("Plant Size", selection: $preferredPlantSize) {
                     ForEach(viewModel.plantSizes, id: \.self) { size in
                         Text(size).tag(size)
                     }
                 }
-
+                
                 Picker("Flowering Color", selection: $preferredFloweringColor) {
                     ForEach(viewModel.floweringColors, id: \.self) { color in
                         Text(color).tag(color)
                     }
                 }
-
+                
                 Picker("Plant Type", selection: $preferredPlantType) {
                     ForEach(viewModel.plantTypes, id: \.self) { type in
                         Text(type).tag(type)
                     }
                 }
-
+                
                 Picker("Plant Height", selection: $preferredPlantHeight) {
                     ForEach(viewModel.plantHeights, id: \.self) { height in
                         Text(height).tag(height)
                     }
                 }
             }
-
-            Button("Find Plants") {
-                            viewModel.fetchOpenAIPlantRecommendations(plantType: preferredPlantType, plantSize: preferredPlantSize, flowerColor: preferredFloweringColor, state: userState, postcode: userPostcode, plantHeight: preferredPlantHeight)
-                        }
-
-                        if viewModel.isLoading {
-                            ProgressView("Loading...")
-                        }
-
-                        if let errorMessage = viewModel.errorMessage {
-                            Text(errorMessage)
-                                .foregroundColor(.red)
+            
+            Section(header: Text("Find Plants")) {
+                Button("Find Plants") {
+                    viewModel.fetchOpenAIPlantRecommendations(plantType: preferredPlantType, plantSize: preferredPlantSize, flowerColor: preferredFloweringColor, state: userState, postcode: userPostcode, plantHeight: preferredPlantHeight)
+                }
+                
+                if viewModel.isLoading {
+                    ProgressView("Loading...")
+                }
+                
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage).foregroundColor(.red)
+                }
+                
             }
-
         }
     }
 }
-
+    
 class PlantViewModel: ObservableObject {
-    @Published var choices: [Choice] = []
-    @Published var recommendedPlants: [Choice] = []
-    @Published var requirements: String = ""
-    @Published var careInfo: String = ""
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
-    
-    var states: [String] {
-        Array(Set(choices.map { $0.state.rawValue })).sorted()
-    }
-    var plantSizes: [String] {
-        Array(Set(choices.map { $0.plantSize.rawValue })).sorted()
-    }
-    var floweringColors: [String] {
-        Array(Set(choices.flatMap { $0.flowerColor.components(separatedBy: ", ").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }})).sorted()
-    }
-    var plantHeights: [String] {
-        Array(Set(choices.map { $0.plantHeight.rawValue })).sorted()
-    }
-    var plantTypes: [String] {
-        Array(Set(choices.map { $0.plantType.rawValue })).sorted()
-    }
-    
-    init() {
-        loadChoices()
-    }
-    
-    private func loadChoices() {
-        // Load choices from a JSON file
-        // This function needs to be implemented according to how you store or retrieve data
-        self.choices = Bundle.main.decode(file: "new.json")
-    }
-    
-    func filterPlants(state: String, plantSize: String, floweringColor: String, plantHeight: String, plantType: String) {
-        recommendedPlants = choices.filter { choice in
-            (state == "State" || choice.state.rawValue == state) &&
-            (plantSize == "Plant Size" || choice.plantSize.rawValue == plantSize) &&
-            (floweringColor == "Flowering Color" || choice.flowerColor.contains(floweringColor)) &&
-            (plantHeight == "Plant Height" || choice.plantHeight.rawValue == plantHeight) &&
-            (plantType == "Plant Type" || choice.plantType.rawValue == plantType)
-        }
-    }
-    
-    func fetchImageURL(for plantName: String, completion: @escaping (URL?) -> Void) {
-        let formattedPlantName = plantName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let urlString = "https://en.wikipedia.org/w/api.php?action=query&titles=\(formattedPlantName)&prop=pageimages&format=json&pithumbsize=500"
+        @Published var choices: [Choice] = []
+        @Published var recommendedPlants: [Choice] = []
+        @Published var requirements: String = ""
+        @Published var careInfo: String = ""
+        @Published var isLoading: Bool = false
+        @Published var errorMessage: String?
         
-        guard let url = URL(string: urlString) else {
-            completion(nil)
-            return
+        var states: [String] {
+            Array(Set(choices.map { $0.state.rawValue })).sorted()
+        }
+        var plantSizes: [String] {
+            Array(Set(choices.map { $0.plantSize.rawValue })).sorted()
+        }
+        var floweringColors: [String] {
+            Array(Set(choices.flatMap { $0.flowerColor.components(separatedBy: ", ").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }})).sorted()
+        }
+        var plantHeights: [String] {
+            Array(Set(choices.map { $0.plantHeight.rawValue })).sorted()
+        }
+        var plantTypes: [String] {
+            Array(Set(choices.map { $0.plantType.rawValue })).sorted()
         }
         
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
+        init() {
+            loadChoices()
+        }
+        
+        private func loadChoices() {
+            // Load choices from a JSON file
+            // This function needs to be implemented according to how you store or retrieve data
+            self.choices = Bundle.main.decode(file: "new.json")
+        }
+        
+        func filterPlants(state: String, plantSize: String, floweringColor: String, plantHeight: String, plantType: String) {
+            recommendedPlants = choices.filter { choice in
+                (state == "State" || choice.state.rawValue == state) &&
+                (plantSize == "Plant Size" || choice.plantSize.rawValue == plantSize) &&
+                (floweringColor == "Flowering Color" || choice.flowerColor.contains(floweringColor)) &&
+                (plantHeight == "Plant Height" || choice.plantHeight.rawValue == plantHeight) &&
+                (plantType == "Plant Type" || choice.plantType.rawValue == plantType)
+            }
+        }
+        
+        func fetchImageURL(for plantName: String, completion: @escaping (URL?) -> Void) {
+            let formattedPlantName = plantName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            let urlString = "https://en.wikipedia.org/w/api.php?action=query&titles=\(formattedPlantName)&prop=pageimages&format=json&pithumbsize=500"
+            
+            guard let url = URL(string: urlString) else {
                 completion(nil)
                 return
             }
             
-            do {
-                let result = try JSONDecoder().decode(WikipediaImageResult.self, from: data)
-                let pageId = result.query.pages.keys.first ?? ""
-                let imageUrl = result.query.pages[pageId]?.thumbnail?.source
-                completion(URL(string: imageUrl ?? ""))
-            } catch {
-                completion(nil)
-            }
-        }.resume()
-    }
-
-    func fetchOpenAIPlantRecommendations(plantType: String, plantSize: String, flowerColor: String, state: String, postcode: String, plantHeight: String) {
+            URLSession.shared.dataTask(with: url) { data, response, error in
+                guard let data = data, error == nil else {
+                    completion(nil)
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(WikipediaImageResult.self, from: data)
+                    let pageId = result.query.pages.keys.first ?? ""
+                    let imageUrl = result.query.pages[pageId]?.thumbnail?.source
+                    completion(URL(string: imageUrl ?? ""))
+                } catch {
+                    completion(nil)
+                }
+            }.resume()
+        }
+        
+        func fetchOpenAIPlantRecommendations(plantType: String, plantSize: String, flowerColor: String, state: String, postcode: String, plantHeight: String) {
             isLoading = true
             APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantType, plantSize: plantSize, flowerColor: flowerColor, plantHeight: plantHeight) { [weak self] result in
                 DispatchQueue.main.async {
@@ -352,70 +353,77 @@ class PlantViewModel: ObservableObject {
                     switch result {
                     case .success(let response):
                         self?.recommendedPlants = response
+                        print("Fetched plants: \(response)")
                     case .failure(let error):
                         self?.errorMessage = error.localizedDescription
+                        print("Error fetching plants: \(error)")
+                        
+                        
+                        
+                    }
+                    
+                }
+            }
+        }
+        
+        func fetchPlantCareInfo(for plantName: String) {
+            let query = "Get me care information for the plant: \(plantName)"
+            
+            sendOpenAIRequest(with: query) { response in
+                DispatchQueue.main.async {
+                    self.requirements = response.requirements
+                    self.careInfo = response.careInfo
+                }
+            }
+        }
+        
+        private func sendOpenAIRequest(with query: String, completion: @escaping (OpenAIResponse) -> Void) {
+            let url = URL(string: "https://api.openai.com/v1/engines/davinci/completions")!
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.addValue("Bearer YOUR_API_KEY", forHTTPHeaderField: "Authorization")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            let body: [String: Any] = ["prompt": query, "max_tokens": 100]
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let data = data {
+                    do {
+                        let decodedResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
+                        completion(decodedResponse)
+                    } catch {
+                        print("Failed to decode response: \(error)")
                     }
                 }
-            }
+            }.resume()
         }
+}
+
     
-    func fetchPlantCareInfo(for plantName: String) {
-        let query = "Get me care information for the plant: \(plantName)"
-        
-        sendOpenAIRequest(with: query) { response in
-            DispatchQueue.main.async {
-                self.requirements = response.requirements
-                self.careInfo = response.careInfo
-            }
-        }
-    }
-
-    private func sendOpenAIRequest(with query: String, completion: @escaping (OpenAIResponse) -> Void) {
-        let url = URL(string: "https://api.openai.com/v1/engines/davinci/completions")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("Bearer YOUR_API_KEY", forHTTPHeaderField: "Authorization")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let body: [String: Any] = ["prompt": query, "max_tokens": 100]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                do {
-                    let decodedResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
-                    completion(decodedResponse)
-                } catch {
-                    print("Failed to decode response: \(error)")
-                }
-            }
-        }.resume()
-    }
-}
-
 struct WikipediaImageResult: Codable {
-    let query: Query
+        let query: Query
 }
-
+    
 struct Query: Codable {
-    let pages: [String: Page]
+        let pages: [String: Page]
 }
-
+    
 struct Page: Codable {
-    let thumbnail: Thumbnail?
-}
-
+        let thumbnail: Thumbnail?
+    }
+    
 struct Thumbnail: Codable {
-    let source: String
+        let source: String
 }
-
+    
 struct OpenAIResponse: Decodable {
-    var choices: [Choice]
-    var requirements: String
-    var careInfo: String
+        var choices: [Choice]
+        var requirements: String
+        var careInfo: String
 }
-
-
+    
+    
 class ImageLoader: ObservableObject {
         @Published var image: Image?
         
@@ -428,6 +436,7 @@ class ImageLoader: ObservableObject {
                 .receive(on: DispatchQueue.main)
                 .assign(to: &$image)
         }
+        
 }
     
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
@@ -624,19 +633,23 @@ struct WebView: UIViewRepresentable {
 }
     
 struct ResultsView: View {
-            @ObservedObject var viewModel: PlantViewModel
-            
-            var body: some View {
-                List(viewModel.recommendedPlants, id: \.id) { plant in
-                    Text(plant.scientificName) // Assuming scientificName holds the plant name
+        @ObservedObject var viewModel: PlantViewModel
+        
+        var body: some View {
+            List(viewModel.recommendedPlants, id: \.id) { plant in
+                VStack(alignment: .leading) {
+                    Text(plant.scientificName)
+                    // Add more details as needed
                 }
-                .navigationBarTitle("Recommended Plants")
             }
+            .navigationBarTitle("Recommended Plants")
+                    .onAppear {
+                        if viewModel.recommendedPlants.isEmpty {
+                            Text("No plants found")
+                        }
+                     }
+                 }
 }
-    
-    
-
-    
     
     // Ensure that you have the ImageLoader class defined as in your previous code
 struct SummaryView: View {
@@ -715,29 +728,29 @@ struct PlantCareView: View {
         var body: some View {
             Text("Plant Care Information")
         }
-}
+    }
     
     // Renaming the second PreferencesView to avoid duplicate declaration
 struct PlantCriteriaSelectionView: View {
-        @State private var selectedCriteria = Set<String>()
-        let availableCriteria = ["Flower Color", "Frost Resistance", "Wind Tolerance", "Plant Size", "Plant Type"]
-        
-        var body: some View {
-            Form {
-                Section(header: Text("Select Criteria")) {
-                    List(availableCriteria, id: \.self) { criteria in
-                        MultipleSelectionRow(title: criteria, isSelected: selectedCriteria.contains(criteria)) {
-                            if selectedCriteria.contains(criteria) {
-                                selectedCriteria.remove(criteria)
-                            } else if selectedCriteria.count < 3 {
-                                selectedCriteria.insert(criteria)
-                            }
+    @State private var selectedCriteria = Set<String>()
+    let availableCriteria = ["Flower Color", "Frost Resistance", "Wind Tolerance", "Plant Size", "Plant Type"]
+    
+    var body: some View {
+        Form {
+            Section(header: Text("Select Criteria")) {
+                List(availableCriteria, id: \.self) { criteria in
+                    MultipleSelectionRow(title: criteria, isSelected: selectedCriteria.contains(criteria)) {
+                        if selectedCriteria.contains(criteria) {
+                            selectedCriteria.remove(criteria)
+                        } else if selectedCriteria.count < 3 {
+                            selectedCriteria.insert(criteria)
                         }
                     }
                 }
-                .navigationBarTitle("Select Criteria")
             }
+            .navigationBarTitle("Select Criteria")
         }
+    }
 }
     
     
@@ -810,7 +823,7 @@ struct PreferencesView: View {
                 .padding()
                 
                 NavigationLink(destination: ResultsView(viewModel: viewModel), isActive: $showResults) { EmptyView() }
-
+                
             }
         }
 }
