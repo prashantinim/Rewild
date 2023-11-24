@@ -109,7 +109,7 @@ struct UserLocationView: View {
             .disabled(userState.isEmpty)
         }
         Button("Fetch Recommendations") {
-             viewModel.fetchOpenAIPlantRecommendations()
+            viewModel.fetchOpenAIPlantRecommendations(plantType: <#String#>, plantSize: <#String#>, flowerColor: <#String#>, state: <#String#>, postcode: <#String#>, plantHeight: <#String#>)
          }
      }
  }
@@ -515,14 +515,13 @@ class PlantViewModel: ObservableObject {
         }.resume()
     }
 
-    func fetchOpenAIPlantRecommendations() {
-        // Example usage of plantType, plantSize, and flowerColor
-        APICaller.shared.getPlantRecommendations(plantType: "herb", plantSize: "small", flowerColor: "blue") { result in
+    func fetchOpenAIPlantRecommendations(plantType: String, plantSize: String, flowerColor: String, state: String, postcode: String, plantHeight: String) {
+        APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantType, plantSize: plantSize, flowerColor: flowerColor, plantHeight: plantHeight) { result in
             switch result {
             case .success(let response):
-                print(response) // Handle the success case
+                print("Received plant recommendations: \(response)") // Handle the success case
             case .failure(let error):
-                print(error.localizedDescription) // Handle the failure case
+                print("Error fetching plant recommendations: \(error.localizedDescription)") // Handle the failure case
             }
         }
     }
