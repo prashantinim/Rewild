@@ -213,6 +213,7 @@ struct UserLocationView: View {
 
     
     var body: some View {
+        
         Form {
             Section(header: Text("Your Location")) {
                 Picker("State", selection: $userState) {
@@ -402,15 +403,6 @@ struct OpenAIResponse: Decodable {
     var requirements: String
     var careInfo: String
 }
-
-
-
-
-
-
-
-
-
 
 
 class ImageLoader: ObservableObject {
@@ -636,7 +628,7 @@ struct ResultsView: View {
     
     
     // Ensure that you have the ImageLoader class defined as in your previous code
- struct SummaryView: View {
+struct SummaryView: View {
         var selectedPlant: Choice
         var viewModel: PlantViewModel
         var wikipediaURL: URL
