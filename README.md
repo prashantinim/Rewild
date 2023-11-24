@@ -1,8 +1,8 @@
-# PlantRecommenderApp - README
+# Rewild - README
 
 ## Overview
 
-PlantRecommenderApp is a SwiftUI-based iOS application designed to assist users in finding the perfect plants for their needs. It utilizes OpenAI's powerful language models to provide personalized plant recommendations based on the user's location and preferences. The app also features user profile management, allowing users to track their plant cultivation progress and maintain a wishlist of desired plants.
+Rewild is a SwiftUI-based iOS application designed to assist users in finding the perfect plants for their needs. It utilizes OpenAI's powerful language models to provide personalized plant recommendations based on the user's location and preferences. The app also features user profile management, allowing users to track their plant cultivation progress and maintain a wishlist of desired plants.
 
 ## Features
 
