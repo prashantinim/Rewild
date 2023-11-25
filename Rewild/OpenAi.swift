@@ -81,7 +81,7 @@ final class APICaller {
 
 
 
-    public func getPlantRecommendations(state: String, postcode: String, plantType: String, plantSize: String, flowerColor: String, plantHeight: String, completion: @escaping (Result<[String], Error>) -> Void) {
+    func getPlantRecommendations(state: String, postcode: String, plantType: String, plantSize: String, flowerColor: String, plantHeight: String, completion: @escaping (Result<[String], Error>) -> Void) {
         let query = "List three native plants from the region with state: \(state) and postcode: \(postcode) that match these requirements: plant type \(plantType), plant size \(plantSize), flower color \(flowerColor), plant height \(plantHeight)."
 
     

@@ -114,12 +114,13 @@ enum PlantSize: String, Codable, CaseIterable {
     case small = "Small"
 }
 
-enum PlantType: String, Codable {
+enum PlantType: String, Codable, CaseIterable {
     case annualPerennial = "Annual/Perennial"
     case others = "Others"
     case shrub = "Shrub"
     case tree = "Tree"
 }
+
 
 enum UserState: String, Codable, CaseIterable {
     case nsw = "NSW"

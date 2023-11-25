@@ -359,28 +359,30 @@ class PlantViewModel: ObservableObject {
         }
         
     func fetchOpenAIPlantRecommendations(plantType: String, plantSize: String, flowerColor: String, state: String, postcode: String, plantHeight: String) {
-        isLoading = true
-        APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantType, plantSize: plantSize, flowerColor: flowerColor, plantHeight: plantHeight) { [weak self] result in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                switch result {
-                case .success(let plantNames):
-                    // Update your UI with the plant names
-                    print("Fetched plant names: \(plantNames)")
-                case .failure(let error):
-                    self?.errorMessage = error.localizedDescription
-                    self?.showError = true
-                    print("Error fetching plants: \(error)")
-                        
-                        
-                        
+            isLoading = true
+            APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantType, plantSize: plantSize, flowerColor: flowerColor, plantHeight: plantHeight) { [weak self] result in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    switch result {
+                    case .success(let plantNames):
+                        // Handle successful response
+                        self?.handleSuccessfulResponse(plantNames)
+                    case .failure(let error):
+                        self?.handleErrorResponse(error)
                     }
-                    
                 }
             }
-        }
+    }
+    
+    private func handleSuccessfulResponse(_ plantNames: [String]) {
+            // Logic to handle successful response, such as updating UI
+    }
+
+    private func handleErrorResponse(_ error: Error) {
+            // Logic to handle error response, such as showing an alert
+    }
         
-        func fetchPlantCareInfo(for plantName: String) {
+    func fetchPlantCareInfo(for plantName: String) {
             let query = "Get me care information for the plant: \(plantName)"
             
             sendOpenAIRequest(with: query) { response in
@@ -389,9 +391,9 @@ class PlantViewModel: ObservableObject {
                     self.careInfo = response.careInfo
                 }
             }
-        }
+    }
         
-        private func sendOpenAIRequest(with query: String, completion: @escaping (OpenAIResponse) -> Void) {
+    private func sendOpenAIRequest(with query: String, completion: @escaping (OpenAIResponse) -> Void) {
             let url = URL(string: "https://api.openai.com/v1/engines/davinci/completions")!
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
@@ -411,7 +413,7 @@ class PlantViewModel: ObservableObject {
                     }
                 }
             }.resume()
-        }
+}
     
     var body: some Scene {
             WindowGroup {
@@ -779,6 +781,16 @@ struct PreferencesView: View {
         @State private var selectedPlantHeight: String = "Plant Height"
         @State private var selectedPlantType: String = "Plant Type"
         @State private var showResults = false
+    @State private var preferredPlantSize: String = "Small"
+    @State private var preferredPlantType: PlantType = .shrub  // Default selection
+    @State private var preferredFloweringColor: String = "Default Color"
+    @State private var preferredPlantHeight: String = PlantHeight.allCases.first?.rawValue ?? ""
+
+    
+    let floweringColors = ["Red", "Blue", "Yellow", "White"] /// Replace with your defaul
+
+
+    
         
         var body: some View {
             VStack {
@@ -795,37 +807,36 @@ struct PreferencesView: View {
                 .pickerStyle(MenuPickerStyle())
                 .padding()
                 
-                Picker("Plant Size", selection: $selectedPlantSize) {
-                    Text("Plant Size").tag("Plant Size")
-                    ForEach(PlantSize.allCases, id: \.self) { size in
-                        Text(size.rawValue).tag(size.rawValue)
+                // or any default valid size
+
+                Picker("Plant Size", selection: $preferredPlantSize) {
+                    ForEach(viewModel.plantSizes, id: \.self) { size in
+                        Text(size).tag(size)
+                    }
+                }
+
+                .pickerStyle(MenuPickerStyle())
+                .padding()
+                
+                Picker("Flowering Color", selection: $preferredFloweringColor) {
+                    ForEach(floweringColors, id: \.self) { color in
+                        Text(color).tag(color)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
                 .padding()
                 
-                Picker("Flowering Color", selection: $selectedFloweringColor) {
-                    Text("Flowering Color").tag("Flowering Color")
-                    ForEach(viewModel.floweringColors, id: \.self) {
-                        Text($0).tag($0)
+                Picker("Plant Height", selection: $preferredPlantHeight) {
+                    ForEach(PlantHeight.allCases, id: \.self) { height in
+                        Text(height.rawValue).tag(height.rawValue)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
                 .padding()
                 
-                Picker("Plant Height", selection: $selectedPlantHeight) {
-                    Text("Plant Height").tag("Plant Height")
-                    ForEach(PlantHeight.allCases, id: \.self) {
-                        Text($0.rawValue).tag($0.rawValue)
-                    }
-                }
-                .pickerStyle(MenuPickerStyle())
-                .padding()
-                
-                Picker("Plant Type", selection: $selectedPlantType) {
-                    Text("Plant Type").tag("Plant Type")
-                    ForEach(viewModel.plantTypes, id: \.self) {
-                        Text($0).tag($0)
+                Picker("Plant Type", selection: $preferredPlantType) {
+                    ForEach(PlantType.allCases, id: \.self) { type in
+                        Text(type.rawValue).tag(type)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
