@@ -12,12 +12,16 @@ import CoreLocation
 
 @main
 struct PlantRecommenderApp: App {
+    @StateObject var viewModel = PlantViewModel()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(viewModel)
         }
     }
 }
+
 
 struct ContentView: View {
     var body: some View {
@@ -210,10 +214,8 @@ struct UserLocationView: View {
     
     @State private var showResults = false
     @State private var isLoading = false
-    
-    
+
     var body: some View {
-        
         Form {
             Section(header: Text("Your Location")) {
                 Picker("State", selection: $userState) {
@@ -222,7 +224,7 @@ struct UserLocationView: View {
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
-                
+
                 Picker("Postcode", selection: $userPostcode) {
                     ForEach(UserPostcode.allCases, id: \.self) { postcode in
                         Text(postcode.rawValue).tag(postcode.rawValue)
@@ -230,58 +232,69 @@ struct UserLocationView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
             }
-            
+
             Section(header: Text("Select Your Preferences")) {
                 Picker("Plant Size", selection: $preferredPlantSize) {
+                    Text("Select Size").tag("Select Size") // Add a tag for the default value
                     ForEach(viewModel.plantSizes, id: \.self) { size in
                         Text(size).tag(size)
                     }
                 }
-                
+
                 Picker("Flowering Color", selection: $preferredFloweringColor) {
+                    Text("Select Color").tag("Select Color") // Add a tag for the default value
                     ForEach(viewModel.floweringColors, id: \.self) { color in
                         Text(color).tag(color)
                     }
                 }
-                
+
                 Picker("Plant Type", selection: $preferredPlantType) {
+                    Text("Select Type").tag("Select Type") // Add a tag for the default value
                     ForEach(viewModel.plantTypes, id: \.self) { type in
                         Text(type).tag(type)
                     }
                 }
-                
+
                 Picker("Plant Height", selection: $preferredPlantHeight) {
+                    Text("Select Height").tag("Select Height") // Add a tag for the default value
                     ForEach(viewModel.plantHeights, id: \.self) { height in
                         Text(height).tag(height)
                     }
                 }
             }
-            
+
             Section(header: Text("Find Plants")) {
                 Button("Find Plants") {
+                    showResults = true
                     viewModel.fetchOpenAIPlantRecommendations(plantType: preferredPlantType, plantSize: preferredPlantSize, flowerColor: preferredFloweringColor, state: userState, postcode: userPostcode, plantHeight: preferredPlantHeight)
                 }
-                
+
                 if viewModel.isLoading {
                     ProgressView("Loading...")
                 }
-                
-                if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage).foregroundColor(.red)
-                }
-                
             }
+        }
+        .alert(isPresented: $viewModel.showError) {
+            Alert(
+                title: Text("Error"),
+                message: Text(viewModel.errorMessage),
+                dismissButton: .default(Text("OK")) {
+                    viewModel.showError = false // Close the alert after OK is tapped
+                }
+            )
         }
     }
 }
-    
+
 class PlantViewModel: ObservableObject {
         @Published var choices: [Choice] = []
         @Published var recommendedPlants: [Choice] = []
         @Published var requirements: String = ""
         @Published var careInfo: String = ""
         @Published var isLoading: Bool = false
-        @Published var errorMessage: String?
+    @Published var errorMessage: String = ""
+    @Published var showError: Bool = false
+    @StateObject var viewModel = PlantViewModel()
         
         var states: [String] {
             Array(Set(choices.map { $0.state.rawValue })).sorted()
@@ -397,6 +410,13 @@ class PlantViewModel: ObservableObject {
                     }
                 }
             }.resume()
+        }
+    
+    var body: some Scene {
+            WindowGroup {
+                ContentView()
+                    .environmentObject(viewModel)
+            }
         }
 }
 
@@ -626,7 +646,7 @@ struct WebView: UIViewRepresentable {
 }
     
 struct ResultsView: View {
-        @ObservedObject var viewModel: PlantViewModel
+    @ObservedObject var viewModel: PlantViewModel
         
     var body: some View {
         List(viewModel.recommendedPlants, id: \.id) { plant in
@@ -816,7 +836,11 @@ struct PreferencesView: View {
                 }
                 .padding()
                 
-                NavigationLink(destination: ResultsView(viewModel: viewModel), isActive: $showResults) { EmptyView() }
+                NavigationLink(destination: ResultsView(viewModel: viewModel), isActive: $showResults) {
+                    EmptyView()
+                }
+
+
                 
             }
         }
@@ -861,6 +885,9 @@ struct ChatbotView: View {
             userInput = "" // Clear the user input field
         }
 }
+
+
+
     
 
 
