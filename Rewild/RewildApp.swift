@@ -358,18 +358,19 @@ class PlantViewModel: ObservableObject {
             }.resume()
         }
         
-        func fetchOpenAIPlantRecommendations(plantType: String, plantSize: String, flowerColor: String, state: String, postcode: String, plantHeight: String) {
-            isLoading = true
-            APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantType, plantSize: plantSize, flowerColor: flowerColor, plantHeight: plantHeight) { [weak self] result in
-                DispatchQueue.main.async {
-                    self?.isLoading = false
-                    switch result {
-                    case .success(let response):
-                        self?.recommendedPlants = response
-                        print("Fetched plants: \(response)")
-                    case .failure(let error):
-                        self?.errorMessage = error.localizedDescription
-                        print("Error fetching plants: \(error)")
+    func fetchOpenAIPlantRecommendations(plantType: String, plantSize: String, flowerColor: String, state: String, postcode: String, plantHeight: String) {
+        isLoading = true
+        APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantType, plantSize: plantSize, flowerColor: flowerColor, plantHeight: plantHeight) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                switch result {
+                case .success(let plantNames):
+                    // Update your UI with the plant names
+                    print("Fetched plant names: \(plantNames)")
+                case .failure(let error):
+                    self?.errorMessage = error.localizedDescription
+                    self?.showError = true
+                    print("Error fetching plants: \(error)")
                         
                         
                         

@@ -81,106 +81,25 @@ final class APICaller {
 
 
 
-    public func getPlantRecommendations(state: String, postcode: String, plantType: String, plantSize: String, flowerColor: String, plantHeight: String, completion: @escaping (Result<[Choice], Error>) -> Void) {
-        let query = "Get me three native plants from the region with state: \(state) and postcode: \(postcode) that best match these requirements: " +
-        "plant_type:\(plantType), " +
-        "plant_size:\(plantSize), " +
-        "flower_color:\(flowerColor), " +
-        "plant_height:\(plantHeight)"
+    public func getPlantRecommendations(state: String, postcode: String, plantType: String, plantSize: String, flowerColor: String, plantHeight: String, completion: @escaping (Result<[String], Error>) -> Void) {
+        let query = "List three native plants from the region with state: \(state) and postcode: \(postcode) that match these requirements: plant type \(plantType), plant size \(plantSize), flower color \(flowerColor), plant height \(plantHeight)."
+
     
 
+        // Inside getPlantRecommendations function
         client?.sendCompletion(with: query, completionHandler: { result in
-                    switch result {
-                    case .success(let model):
-                        // Check if there are choices in the response
-                        guard let choices = model.choices else {
-                            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No choices in response"])))
-                            return
-                        }
-                        
-                        let parsedChoices = choices.map { choice -> Choice in
-                            let uniqueID = UUID().uuidString
-                                
-                                // Fill in the properties based on your parsing logic
-                                let locationID = LocationID.the0F92C001Ddc5D67Bec3Dfc4Caed49Ca1 // Example default value
-                                let scientificName = choice.text
-                                let commonName = "Default Common Name" // Placeholder
-                                let family = "Default Family" // Placeholder
-                                let kingdom = Kingdom.plantae // Example default value
-                                let count = 1 // Placeholder
-                                let state = UserState.nsw // Example default value
-                                let postcode = 12345 // Placeholder
-                                let speciesID = 1 // Placeholder
-                                let plantType = PlantType.shrub // Example default value
-                                let plantOrigin = "Default Origin" // Placeholder
-                                let lightRequirement = LightRequirement.fullSun // Example default value
-                                let windTolerance = WindTolerance.sheltered // Example default value
-                                let growthRate = GrowthRate.medium // Example default value
-                                let frostResistant = FrostResistant.hardy // Example default value
-                                let isEvergreen = false // Placeholder
-                                let isNative = true // Placeholder
-                                let plantHeight = PlantHeight.the15M // Example default value
-                                let plantWidth = 1.0 // Placeholder
-                                let plantSize = PlantSize.medium // Example default value
-                                let flowerColor = "Default Flower Color" // Placeholder
-                                let occurrenceByState = "Default Occurrence" // Placeholder
-                                let floweringMonth = "Default Month" // Placeholder
-                                let climateZone = "Default Climate Zone" // Placeholder
-                                let isIntroducedAct = false // Placeholder
-                                let isIntroducedTas = false // Placeholder
-                                let isIntroducedWa = false // Placeholder
-                                let isIntroducedVic = false // Placeholder
-                                let isIntroducedQld = false // Placeholder
-                                let isIntroducedNsw = false // Placeholder
-                                let isIntroducedSa = false // Placeholder
-                                let isIntroducedNT = false // Placeholder
-                                let imageURL = "Default Image URL" // Placeholder
-                                let summary = "Default Summary" // Placeholder
+            switch result {
+            case .success(let model):
+                guard let choices = model.choices else {
+                    completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No choices in response"])))
+                    return
+                }
 
-                                // Create and return a Choice instance with the filled properties
-                                return Choice(
-                                    id: uniqueID,
-                                    locationID: locationID,
-                                    scientificName: scientificName,
-                                    commonName: commonName,
-                                    family: family,
-                                    kingdom: kingdom,
-                                    count: count,
-                                    state: state,
-                                    postcode: postcode,
-                                    speciesID: speciesID,
-                                    plantType: plantType,
-                                    plantOrigin: plantOrigin,
-                                    lightRequirement: lightRequirement,
-                                    windTolerance: windTolerance,
-                                    growthRate: growthRate,
-                                    frostResistant: frostResistant,
-                                    isEvergreen: isEvergreen,
-                                    isNative: isNative,
-                                    plantHeight: plantHeight,
-                                    plantWidth: plantWidth,
-                                    plantSize: plantSize,
-                                    flowerColor: flowerColor,
-                                    occurrenceByState: occurrenceByState,
-                                    floweringMonth: floweringMonth,
-                                    climateZone: climateZone,
-                                    isIntroducedAct: isIntroducedAct,
-                                    isIntroducedTas: isIntroducedTas,
-                                    isIntroducedWa: isIntroducedWa,
-                                    isIntroducedVic: isIntroducedVic,
-                                    isIntroducedQld: isIntroducedQld,
-                                    isIntroducedNsw: isIntroducedNsw,
-                                    isIntroducedSa: isIntroducedSa,
-                                    isIntroducedNT: isIntroducedNT,
-                                    imageURL: imageURL,
-                                    summary: summary
+                let plantNames = choices.compactMap { $0.text.trimmingCharacters(in: .whitespacesAndNewlines) }
+                completion(.success(plantNames))
 
-                            )
-                        }
-                        
-                        completion(.success(parsedChoices))
-                    case .failure(let error):
-                        completion(.failure(error))
+            case .failure(let error):
+                completion(.failure(error))
             }
         })
 
