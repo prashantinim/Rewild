@@ -1,4 +1,3 @@
-
 //
 //  OpenAi.swift
 //  Rewild

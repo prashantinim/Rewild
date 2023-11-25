@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>2</string>
+					<string>188</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>1</string>
+					<string>188</string>
 					<key>Timestamp</key>
-					<string>722519587.259047</string>
+					<string>722574912.498544</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,13 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>//
-</string>
+				<string></string>
 				<key>leading</key>
-				<string>
+				<string>    }
+}
 </string>
 				<key>trailing</key>
-				<string>//  OpenAi.swift
-//  Rewild
-//
-</string>
+				<string></string>
 			</dict>
 			<key>title</key>
 			<string>Error: Expressions are not allowed at the top level</string>
