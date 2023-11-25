@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		143CA6A02B108F7400369B1F /* OpenAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 143CA69F2B108F7400369B1F /* OpenAIKit */; };
 		143CA6AA2B10A32500369B1F /* OpenAi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143CA6A92B10A32400369B1F /* OpenAi.swift */; };
-		148BDD4F2B119DD90010D245 /* new.json in Resources */ = {isa = PBXBuildFile; fileRef = 148BDD4E2B119DD90010D245 /* new.json */; };
+		148BDD512B11F18E0010D245 /* new.json in Resources */ = {isa = PBXBuildFile; fileRef = 148BDD502B11F18E0010D245 /* new.json */; };
 		14DB3E452B0FBA4D00A00974 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 14DB3E442B0FBA4D00A00974 /* OpenAISwift */; };
 		14E913332B0F894000DF160A /* RewildApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E913322B0F894000DF160A /* RewildApp.swift */; };
 		14E913372B0F894500DF160A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14E913362B0F894500DF160A /* Assets.xcassets */; };
@@ -39,7 +39,7 @@
 
 /* Begin PBXFileReference section */
 		143CA6A92B10A32400369B1F /* OpenAi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAi.swift; sourceTree = "<group>"; };
-		148BDD4E2B119DD90010D245 /* new.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = new.json; path = ../../../../new.json; sourceTree = "<group>"; };
+		148BDD502B11F18E0010D245 /* new.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = new.json; path = ../../../../new.json; sourceTree = "<group>"; };
 		14E9132F2B0F894000DF160A /* Rewild.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rewild.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		14E913322B0F894000DF160A /* RewildApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewildApp.swift; sourceTree = "<group>"; };
 		14E913362B0F894500DF160A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -105,8 +105,8 @@
 				14E913322B0F894000DF160A /* RewildApp.swift */,
 				143CA6A92B10A32400369B1F /* OpenAi.swift */,
 				14E9135C2B0F897700DF160A /* Specifics.swift */,
-				148BDD4E2B119DD90010D245 /* new.json */,
 				14E913362B0F894500DF160A /* Assets.xcassets */,
+				148BDD502B11F18E0010D245 /* new.json */,
 				14E913382B0F894500DF160A /* Preview Content */,
 			);
 			path = Rewild;
@@ -251,7 +251,7 @@
 			files = (
 				14E9133A2B0F894500DF160A /* Preview Assets.xcassets in Resources */,
 				14E913372B0F894500DF160A /* Assets.xcassets in Resources */,
-				148BDD4F2B119DD90010D245 /* new.json in Resources */,
+				148BDD512B11F18E0010D245 /* new.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
