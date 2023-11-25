@@ -27,7 +27,8 @@ struct Choice: Codable, Identifiable {
     let plantHeight: PlantHeight
     let plantWidth: Double
     let plantSize: PlantSize
-    let flowerColor, occurrenceByState, floweringMonth, climateZone: String
+    let flowerColor: FlowerColor
+    let occurrenceByState, floweringMonth, climateZone: String
     let isIntroducedAct, isIntroducedTas, isIntroducedWa, isIntroducedVic: Bool
     let isIntroducedQld, isIntroducedNsw, isIntroducedSa, isIntroducedNT: Bool
     let imageURL, summary: String
@@ -74,6 +75,7 @@ enum FrostResistant: String, Codable {
     case marginal = "Marginal"
     case tender = "Tender"
 }
+
 
 enum GrowthRate: String, Codable {
     case fast = "Fast"

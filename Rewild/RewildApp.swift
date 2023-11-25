@@ -146,29 +146,36 @@ struct UserProfileView: View {
 }
 
 
+enum FlowerColor: String, Codable {
+    case white = "White"
+    case Blue = "Blue"
+    case yellow = "Yellow"
+}
 struct UserLocationView: View {
-    @State private var userState = UserState.nsw // Default enum case
-        @State private var userPostcode = UserPostcode.nsw2084 // Default enum case
-        @ObservedObject var viewModel = PlantViewModel()
+    @State private var userState: UserState? = nil
+    @State private var userPostcode: UserPostcode? = nil// Default enum case
+    @ObservedObject var viewModel = PlantViewModel()
+    @State private var preferredFloweringColor: FlowerColor = .white
+
         
-    
-        @State private var preferredFloweringColor = "Red" // Default value
+    // Default value
     @State private var preferredPlantType: PlantType = .shrub // Default value, adjust as needed
     @State private var preferredPlantSize: PlantSize = .medium // Default value, adjust as needed
     @State private var preferredPlantHeight: PlantHeight = .the15M // Default value, adjust as needed
 
         
-        @State private var showResults = false
-
+    @State private var showResults = false
 
     var body: some View {
         Form {
             Section(header: Text("Your Location")) {
                 Picker("State", selection: $userState) {
+                    Text("Select a state").tag(UserState?.none) // Optional for 'none' selection
                     ForEach(UserState.allCases, id: \.self) { state in
-                        Text(state.rawValue).tag(state.rawValue)
+                        Text(state.rawValue).tag(state as UserState?)
                     }
                 }
+
                 .pickerStyle(MenuPickerStyle())
 
                 Picker("Postcode", selection: $userPostcode) {
@@ -214,11 +221,11 @@ struct UserLocationView: View {
                 Button("Find Plants") {
                     showResults = true
                     viewModel.fetchOpenAIPlantRecommendations(
-                        state: userState.rawValue,
-                        postcode: userPostcode.rawValue,
+                        state: userState!.rawValue,
+                        postcode: userPostcode!.rawValue,
                         plantType: preferredPlantType, // Directly using the enum-typed variable
                         plantSize: preferredPlantSize, // Directly using the enum-typed variable
-                        flowerColor: preferredFloweringColor, // Assuming this is a String
+                        flowerColor: preferredFloweringColor.rawValue, // Assuming this is a String
                         plantHeight: preferredPlantHeight // Directly using the enum-typed variable
                     )
                 }
@@ -257,8 +264,9 @@ class PlantViewModel: ObservableObject {
         var plantSizes: [String] {
             Array(Set(choices.map { $0.plantSize.rawValue })).sorted()
         }
+       
         var floweringColors: [String] {
-            Array(Set(choices.flatMap { $0.flowerColor.components(separatedBy: ", ").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }})).sorted()
+            Array(Set(choices.map { $0.flowerColor.rawValue })).sorted()
         }
         var plantHeights: [String] {
             Array(Set(choices.map { $0.plantHeight.rawValue })).sorted()
@@ -277,11 +285,12 @@ class PlantViewModel: ObservableObject {
             self.choices = Bundle.main.decode(file: "new.json")
         }
         
-        func filterPlants(state: String, plantSize: String, floweringColor: String, plantHeight: String, plantType: String) {
+        func filterPlants(state: String, plantSize: String, flowerColor: String, plantHeight: String, plantType: String) {
             recommendedPlants = choices.filter { choice in
                 (state == "State" || choice.state.rawValue == state) &&
                 (plantSize == "Plant Size" || choice.plantSize.rawValue == plantSize) &&
-                (floweringColor == "Flowering Color" || choice.flowerColor.contains(floweringColor)) &&
+                (flowerColor == "Flowering Color" || choice.flowerColor.rawValue == flowerColor) &&
+
                 (plantHeight == "Plant Height" || choice.plantHeight.rawValue == plantHeight) &&
                 (plantType == "Plant Type" || choice.plantType.rawValue == plantType)
             }
@@ -327,7 +336,7 @@ class PlantViewModel: ObservableObject {
                         // Convert plantNames to Choices and assign to recommendedPlants
                         // You need to modify this logic based on how you want to handle the results
                         self?.recommendedPlants = plantNames.map { name in
-                            Choice(id: UUID().uuidString, locationID: .the0F92C001Ddc5D67Bec3Dfc4Caed49Ca1, scientificName: name, commonName: "Common Name", family: "Family", kingdom: .plantae, count: 1, state: .nsw, postcode: 12345, speciesID: 1, plantType: .shrub, plantOrigin: "Origin", lightRequirement: .fullSun, windTolerance: .sheltered, growthRate: .medium, frostResistant: .hardy, isEvergreen: false, isNative: true, plantHeight: .the15M, plantWidth: 1.0, plantSize: .medium, flowerColor: "Color", occurrenceByState: "Occurrence", floweringMonth: "Month", climateZone: "Zone", isIntroducedAct: false, isIntroducedTas: false, isIntroducedWa: false, isIntroducedVic: false, isIntroducedQld: false, isIntroducedNsw: false, isIntroducedSa: false, isIntroducedNT: false, imageURL: "URL", summary: "Summary")
+                            Choice(id: UUID().uuidString, locationID: .the0F92C001Ddc5D67Bec3Dfc4Caed49Ca1, scientificName: name, commonName: "Common Name", family: "Family", kingdom: .plantae, count: 1, state: .nsw, postcode: 12345, speciesID: 1, plantType: .shrub, plantOrigin: "Origin", lightRequirement: .fullSun, windTolerance: .sheltered, growthRate: .medium, frostResistant: .hardy, isEvergreen: false, isNative: true, plantHeight: .the15M, plantWidth: 1.0, plantSize: .medium, flowerColor: FlowerColor(rawValue: "Color") ?? .white, occurrenceByState: "Occurrence", floweringMonth: "Month", climateZone: "Zone", isIntroducedAct: false, isIntroducedTas: false, isIntroducedWa: false, isIntroducedVic: false, isIntroducedQld: false, isIntroducedNsw: false, isIntroducedSa: false, isIntroducedNT: false, imageURL: "URL", summary: "Summary")
                         }
                     case .failure(let error):
                         self?.handleErrorResponse(error)
@@ -614,16 +623,18 @@ struct ResultsView: View {
     @ObservedObject var viewModel: PlantViewModel
         
     var body: some View {
-        List(viewModel.recommendedPlants, id: \.id) { plant in
-            VStack(alignment: .leading) {
-                Text(plant.scientificName)
-                // Add more details as needed
-            }
-        }
-        .navigationBarTitle("Recommended Plants")
-        .onAppear {
-            if viewModel.recommendedPlants.isEmpty {
-                Text("No plants found")
+            Group {
+                if viewModel.recommendedPlants.isEmpty {
+                    Text("No plants found")
+                        .padding()
+                } else {
+                    List(viewModel.recommendedPlants, id: \.id) { plant in
+                        VStack(alignment: .leading) {
+                            Text(plant.scientificName)
+                            // Add more details as needed
+                        }
+                    }
+                    .navigationBarTitle("Recommended Plants")
             }
         }
     }
@@ -743,9 +754,9 @@ struct PreferencesView: View {
         @State private var selectedPlantHeight: String = "Plant Height"
         @State private var selectedPlantType: String = "Plant Type"
         @State private var showResults = false
-    @State private var preferredPlantSize: String = "Small"
-    @State private var preferredPlantType: PlantType = .shrub  // Default selection
-    @State private var preferredFloweringColor: String = "Default Color"
+    @State private var preferredPlantType: PlantType? = nil
+    @State private var preferredPlantSize: PlantSize? = nil
+    @State private var preferredFloweringColor: FlowerColor? = nil
     @State private var preferredPlantHeight: String = PlantHeight.allCases.first?.rawValue ?? ""
 
     
@@ -805,7 +816,7 @@ struct PreferencesView: View {
                 .padding()
                 
                 Button("Recommended Plants") {
-                    viewModel.filterPlants(state: selectedState, plantSize: selectedPlantSize, floweringColor: selectedFloweringColor, plantHeight: selectedPlantHeight, plantType: selectedPlantType)
+                    viewModel.filterPlants(state: selectedState, plantSize: selectedPlantSize, flowerColor: selectedFloweringColor, plantHeight: selectedPlantHeight, plantType: selectedPlantType)
                     showResults = true
                 }
                 .padding()

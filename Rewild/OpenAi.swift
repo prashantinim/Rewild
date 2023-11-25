@@ -58,7 +58,7 @@ final class APICaller {
                 plantHeight: PlantHeight.the15M, // Example default value
                 plantWidth: 1.0, // Placeholder
                 plantSize: PlantSize.medium, // Example default value
-                flowerColor: "Default Color", // Placeholder
+                flowerColor: FlowerColor(rawValue: "Color") ?? .white,
                 occurrenceByState: "Default Occurrence", // Placeholder
                 floweringMonth: "Default Month", // Placeholder
                 climateZone: "Default Zone", // Placeholder
@@ -75,7 +75,6 @@ final class APICaller {
             )
             choices.append(choice)
         }
-
         return choices
     }
 
