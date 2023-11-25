@@ -147,16 +147,19 @@ struct UserProfileView: View {
 
 
 struct UserLocationView: View {
-    @State private var userState: UserState = .nsw // Default value
-        @State private var userPostcode: UserPostcode = .nsw2084 // Default value
+    @State private var userState = UserState.nsw // Default enum case
+        @State private var userPostcode = UserPostcode.nsw2084 // Default enum case
         @ObservedObject var viewModel = PlantViewModel()
         
-        @State private var preferredPlantSize: PlantSize = .medium // Default value
-        @State private var preferredFloweringColor: String = "Red" // Default value
-        @State private var preferredPlantType: PlantType = .shrub // Default value
-        @State private var preferredPlantHeight: PlantHeight = .the15M // Default value
+    
+        @State private var preferredFloweringColor = "Red" // Default value
+    @State private var preferredPlantType: PlantType = .shrub // Default value, adjust as needed
+    @State private var preferredPlantSize: PlantSize = .medium // Default value, adjust as needed
+    @State private var preferredPlantHeight: PlantHeight = .the15M // Default value, adjust as needed
+
         
         @State private var showResults = false
+
 
     var body: some View {
         Form {
@@ -177,33 +180,34 @@ struct UserLocationView: View {
             }
 
             Section(header: Text("Select Your Preferences")) {
+                // Plant Size Picker
                 Picker("Plant Size", selection: $preferredPlantSize) {
-                    Text("Select Size").tag("Select Size") // Add a tag for the default value
-                    ForEach(viewModel.plantSizes, id: \.self) { size in
-                        Text(size).tag(size)
+                    ForEach(PlantSize.allCases, id: \.self) { size in
+                        Text(size.rawValue).tag(size)
                     }
                 }
 
+                // Flowering Color Picker
                 Picker("Flowering Color", selection: $preferredFloweringColor) {
-                    Text("Select Color").tag("Select Color") // Add a tag for the default value
                     ForEach(viewModel.floweringColors, id: \.self) { color in
                         Text(color).tag(color)
                     }
                 }
 
+                // Plant Type Picker
                 Picker("Plant Type", selection: $preferredPlantType) {
-                    Text("Select Type").tag("Select Type") // Add a tag for the default value
-                    ForEach(viewModel.plantTypes, id: \.self) { type in
-                        Text(type).tag(type)
+                    ForEach(PlantType.allCases, id: \.self) { type in
+                        Text(type.rawValue).tag(type)
                     }
                 }
 
+                // Plant Height Picker
                 Picker("Plant Height", selection: $preferredPlantHeight) {
-                    Text("Select Height").tag("Select Height") // Add a tag for the default value
-                    ForEach(viewModel.plantHeights, id: \.self) { height in
-                        Text(height).tag(height)
+                    ForEach(PlantHeight.allCases, id: \.self) { height in
+                        Text(height.rawValue).tag(height)
                     }
                 }
+
             }
 
             Section(header: Text("Find Plants")) {
@@ -212,12 +216,13 @@ struct UserLocationView: View {
                     viewModel.fetchOpenAIPlantRecommendations(
                         state: userState.rawValue,
                         postcode: userPostcode.rawValue,
-                        plantType: preferredPlantType,
-                        plantSize: preferredPlantSize,
-                        flowerColor: preferredFloweringColor,
-                        plantHeight: preferredPlantHeight
+                        plantType: preferredPlantType, // Directly using the enum-typed variable
+                        plantSize: preferredPlantSize, // Directly using the enum-typed variable
+                        flowerColor: preferredFloweringColor, // Assuming this is a String
+                        plantHeight: preferredPlantHeight // Directly using the enum-typed variable
                     )
                 }
+
 
                 if viewModel.isLoading {
                     ProgressView("Loading...")
