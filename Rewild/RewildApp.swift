@@ -80,112 +80,55 @@ struct MainTabView: View {
 }
 
 struct UserProfileView: View {
-    @State private var username: String = "Username" // Replace with actual user data
-    @State private var preferredPlantSize: String = "Select Size"
-    @State private var preferredFloweringColor: String = "Select Color"
-    @State private var preferredPlantType: String = "Select Type"
-    @State private var preferredPlantHeight: String = "Select Height"
-    
+    @State private var username: String = "Username"
     @State private var plantsCultivatedCount: Int = 0
     @State private var newPlantName: String = ""
     @State private var newPlantCount: Int = 0
-    
-    @State private var isPreferencesSet: Bool = false
     @State private var plantsWishlist: [String] = []
-    
-    var plantSizes = ["Small", "Medium", "Large"]
-    var floweringColors = ["Red", "Blue", "Yellow", "White"]
-    var plantTypes = ["Succulent", "Fern", "Orchid"]
-    var plantHeights = ["Short", "Medium", "Tall"]
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
                 Text("Welcome \(username)!")
                     .font(.title)
                     .padding()
-                
-                if !isPreferencesSet {
-                    Text("Set Your Preferred Plant Characteristics")
-                        .font(.headline)
-                    
-                    Picker("Plant Size", selection: $preferredPlantSize) {
-                        ForEach(plantSizes, id: \.self) { Text($0) }
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding()
-                    
-                    Picker("Flowering Color", selection: $preferredFloweringColor) {
-                        ForEach(floweringColors, id: \.self) { Text($0) }
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding()
-                    
-                    Picker("Plant Type", selection: $preferredPlantType) {
-                        ForEach(plantTypes, id: \.self) { Text($0) }
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding()
-                    
-                    Picker("Plant Height", selection: $preferredPlantHeight) {
-                        ForEach(plantHeights, id: \.self) { Text($0) }
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding()
-                    
-                    Button("Save Preferences") {
-                        isPreferencesSet = true
-                        // Logic to save preferences
-                    }
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                } else {
-                    Text("Your Plant Preferences")
-                        .font(.headline)
-                    Text("Plant Size: \(preferredPlantSize)")
-                    Text("Flowering Color: \(preferredFloweringColor)")
-                    Text("Plant Type: \(preferredPlantType)")
-                    Text("Plant Height: \(preferredPlantHeight)")
-                }
-                
+
+                // Removed preferences section
+
                 Divider()
-                
+
                 VStack {
                     Text("Track Your Cultivation Progress")
                         .font(.headline)
                         .padding()
-                    
+
                     Text("Plants Cultivated: \(plantsCultivatedCount)")
-                    
+
                     TextField("Enter Plant Name", text: $newPlantName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
-                    
+
                     Stepper("Number of Plants: \(newPlantCount)", value: $newPlantCount, in: 0...100)
                         .padding()
-                    
+
                     Button("Add Plant") {
                         plantsCultivatedCount += newPlantCount
-                        // Reset for the next entry
                         newPlantName = ""
                         newPlantCount = 0
-                        // Add logic to save/update plant cultivation data
                     }
                     .padding()
-                    
+
                     Divider()
-                    
+
                     VStack {
                         Text("Your Plants Wishlist")
                             .font(.headline)
                             .padding()
-                        
+
                         ForEach(plantsWishlist, id: \.self) { plant in
                             Text(plant)
                         }
-                        
+
                         Button("Add to Wishlist") {
                             // Add logic to add plants to the wishlist
                         }
@@ -202,18 +145,18 @@ struct UserProfileView: View {
     }
 }
 
+
 struct UserLocationView: View {
-    @State private var userState: String = UserState.allCases.first?.rawValue ?? ""
-    @State private var userPostcode: String = UserPostcode.allCases.first?.rawValue ?? ""
-    @ObservedObject var viewModel = PlantViewModel()
-    
-    @State private var preferredPlantSize: String = "Plant Size"
-    @State private var preferredFloweringColor: String = "Flowering Color"
-    @State private var preferredPlantType: String = "Plant Type"
-    @State private var preferredPlantHeight: String = "Plant Height"
-    
-    @State private var showResults = false
-    @State private var isLoading = false
+    @State private var userState: UserState = .nsw // Default value
+        @State private var userPostcode: UserPostcode = .nsw2084 // Default value
+        @ObservedObject var viewModel = PlantViewModel()
+        
+        @State private var preferredPlantSize: PlantSize = .medium // Default value
+        @State private var preferredFloweringColor: String = "Red" // Default value
+        @State private var preferredPlantType: PlantType = .shrub // Default value
+        @State private var preferredPlantHeight: PlantHeight = .the15M // Default value
+        
+        @State private var showResults = false
 
     var body: some View {
         Form {
@@ -266,7 +209,14 @@ struct UserLocationView: View {
             Section(header: Text("Find Plants")) {
                 Button("Find Plants") {
                     showResults = true
-                    viewModel.fetchOpenAIPlantRecommendations(plantType: preferredPlantType, plantSize: preferredPlantSize, flowerColor: preferredFloweringColor, state: userState, postcode: userPostcode, plantHeight: preferredPlantHeight)
+                    viewModel.fetchOpenAIPlantRecommendations(
+                        state: userState.rawValue,
+                        postcode: userPostcode.rawValue,
+                        plantType: preferredPlantType,
+                        plantSize: preferredPlantSize,
+                        flowerColor: preferredFloweringColor,
+                        plantHeight: preferredPlantHeight
+                    )
                 }
 
                 if viewModel.isLoading {
@@ -358,15 +308,22 @@ class PlantViewModel: ObservableObject {
             }.resume()
         }
         
-    func fetchOpenAIPlantRecommendations(plantType: String, plantSize: String, flowerColor: String, state: String, postcode: String, plantHeight: String) {
+    func fetchOpenAIPlantRecommendations(state: String, postcode: String, plantType: PlantType, plantSize: PlantSize, flowerColor: String, plantHeight: PlantHeight) {
             isLoading = true
-            APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantType, plantSize: plantSize, flowerColor: flowerColor, plantHeight: plantHeight) { [weak self] result in
+            let plantTypeString = plantType.rawValue
+            let plantSizeString = plantSize.rawValue
+            let plantHeightString = plantHeight.rawValue
+
+            APICaller.shared.getPlantRecommendations(state: state, postcode: postcode, plantType: plantTypeString, plantSize: plantSizeString, flowerColor: flowerColor, plantHeight: plantHeightString) { [weak self] result in
                 DispatchQueue.main.async {
                     self?.isLoading = false
                     switch result {
                     case .success(let plantNames):
-                        // Handle successful response
-                        self?.handleSuccessfulResponse(plantNames)
+                        // Convert plantNames to Choices and assign to recommendedPlants
+                        // You need to modify this logic based on how you want to handle the results
+                        self?.recommendedPlants = plantNames.map { name in
+                            Choice(id: UUID().uuidString, locationID: .the0F92C001Ddc5D67Bec3Dfc4Caed49Ca1, scientificName: name, commonName: "Common Name", family: "Family", kingdom: .plantae, count: 1, state: .nsw, postcode: 12345, speciesID: 1, plantType: .shrub, plantOrigin: "Origin", lightRequirement: .fullSun, windTolerance: .sheltered, growthRate: .medium, frostResistant: .hardy, isEvergreen: false, isNative: true, plantHeight: .the15M, plantWidth: 1.0, plantSize: .medium, flowerColor: "Color", occurrenceByState: "Occurrence", floweringMonth: "Month", climateZone: "Zone", isIntroducedAct: false, isIntroducedTas: false, isIntroducedWa: false, isIntroducedVic: false, isIntroducedQld: false, isIntroducedNsw: false, isIntroducedSa: false, isIntroducedNT: false, imageURL: "URL", summary: "Summary")
+                        }
                     case .failure(let error):
                         self?.handleErrorResponse(error)
                     }
