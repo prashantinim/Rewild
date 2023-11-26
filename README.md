@@ -1,4 +1,4 @@
-# Rewild - README
+# Rewild - iOS App
 
 ## Overview
 
